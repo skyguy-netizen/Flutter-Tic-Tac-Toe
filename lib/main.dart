@@ -19,18 +19,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool oTurn = true;
+  bool player1Turn = true;
 
 // 1st player is O
   List<String> displayElement = ['', '', '', '', '', '', '', '', ''];
-  int oScore = 0;
-  int xScore = 0;
+  int player1Score = 0;
+  int player2Score = 0;
   int filledBoxes = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.indigo[900],
+      backgroundColor: Color.fromARGB(255, 156, 10, 134),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -44,14 +44,14 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         const Text(
-                          'Player X',
+                          'Player 2',
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.white),
                         ),
                         Text(
-                          xScore.toString(),
+                          player2Score.toString(),
                           style: const TextStyle(
                               fontSize: 20, color: Colors.white),
                         ),
@@ -63,13 +63,13 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        const Text('Player O',
+                        const Text('Player 1',
                             style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white)),
                         Text(
-                          oScore.toString(),
+                          player1Score.toString(),
                           style: const TextStyle(
                               fontSize: 20, color: Colors.white),
                         ),
@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-            flex: 4,
+            flex: 5,
             child: GridView.builder(
                 itemCount: 9,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -106,20 +106,22 @@ class _HomePageState extends State<HomePage> {
                 }),
           ),
           Expanded(
-              child: Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.indigo[50],
-                    ),
-                    onPressed: _clearScoreBoard,
-                    child: const Text("Clear Score Board",
-                        style: TextStyle(color: Colors.black)))
-              ],
-            ),
-          ))
+            child: Center(
+                child: Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.indigo[50],
+                      ),
+                      onPressed: _clearScoreBoard,
+                      child: const Text("Clear Score Board",
+                          style: TextStyle(color: Colors.black)))
+                ],
+              ),
+            )),
+          ),
         ],
       ),
     );
@@ -127,15 +129,15 @@ class _HomePageState extends State<HomePage> {
 
   void _tapped(int index) {
     setState(() {
-      if (oTurn && displayElement[index] == '') {
+      if (player1Turn && displayElement[index] == '') {
         displayElement[index] = 'O';
         filledBoxes++;
-      } else if (!oTurn && displayElement[index] == '') {
+      } else if (!player1Turn && displayElement[index] == '') {
         displayElement[index] = 'X';
         filledBoxes++;
       }
 
-      oTurn = !oTurn;
+      player1Turn = !player1Turn;
       _checkWinner();
     });
   }
@@ -210,9 +212,9 @@ class _HomePageState extends State<HomePage> {
         });
 
     if (winner == 'O') {
-      oScore++;
+      player1Score++;
     } else if (winner == 'X') {
-      xScore++;
+      player2Score++;
     }
   }
 
@@ -248,8 +250,8 @@ class _HomePageState extends State<HomePage> {
 
   void _clearScoreBoard() {
     setState(() {
-      xScore = 0;
-      oScore = 0;
+      player2Score = 0;
+      player1Score = 0;
       for (int i = 0; i < 9; i++) {
         displayElement[i] = '';
       }
