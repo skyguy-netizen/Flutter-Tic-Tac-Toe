@@ -1,9 +1,15 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:srccode/tiles.dart';
 import 'package:srccode/tile_state.dart';
 
-void main() {
-  runApp(MyApp());
+// void main() {
+//   runApp(MyApp());
+// }
+
+main() {
+  runApp(MaterialApp(home: MyApp()));
 }
 
 //ignore: use_key_in_widget_constructors
@@ -17,19 +23,87 @@ class _MyAppState extends State<MyApp> {
   // var boardState = List.filled(9, TileState.EMPTY);
   final navigatorKey = GlobalKey<NavigatorState>();
   var _boardState = List.filled(9, TileState.EMPTY);
-
   var _currentTurn = TileState.BLUELIGHTSABER;
 
+  int blueLightSaberScore = 0;
+  int redLightSaberScore = 0;
+
   @override
+  Widget buildScoreBoard() {
+    return Scaffold(
+      backgroundColor: Color.fromARGB(0, 255, 255, 255),
+      body: Column(
+        children: <Widget>[
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'Player Red',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 255, 0, 0)),
+                      ),
+                      Text(
+                        blueLightSaberScore.toString(),
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 255, 0, 0)),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text('Player Blue',
+                          // ignore: prefer_const_constructors
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 0, 13, 255))),
+                      Text(
+                        redLightSaberScore.toString(),
+                        // ignore: prefer_const_constructors
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 0, 13, 255)),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     // ignore: prefer_const_constructors
 
     return MaterialApp(
         //ignore: prefer_const_constructors
         home: Scaffold(
-            body: Center(
-      child: Stack(children: [Image.asset("images/board.png"), tiles()]),
-    )));
+            // appBar: AppBar(title: Text("ScoreCard") actions: buildScoreBoard(),),
+            body: (Center(
+      child: Stack(children: [
+        Align(alignment: AlignmentDirectional.topEnd, child: buildScoreBoard()),
+        Align(
+            alignment: AlignmentDirectional.center,
+            child: Image.asset("images/board.png")),
+        Align(alignment: AlignmentDirectional.center, child: tiles()),
+      ]),
+    ))));
   }
 
   Widget tiles() {
@@ -77,6 +151,16 @@ class _MyAppState extends State<MyApp> {
     if (winner != TileState.NONE) {
       print('Winner is: $winner');
       _showWinnerDialog(winner);
+    }
+
+    bool draw = true;
+    for (int i = 0; i < _boardState.length; i++) {
+      if (_boardState[i] == TileState.EMPTY) {
+        draw = false;
+      }
+    }
+    if (draw == true) {
+      _showDrawDialog();
     }
   }
 
@@ -139,10 +223,12 @@ class _MyAppState extends State<MyApp> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Winner"),
-            content: Image.asset(tileState == TileState.BLUELIGHTSABER
-                ? 'images/Blue transparent.png'
-                : 'images/Red transparent.png'),
+            title: (tileState == TileState.BLUELIGHTSABER
+                ? Text("Winner is Blue Lightsaber")
+                : Text("Winner is Red Lightsaber")),
+            // content: Image.asset(tileState == TileState.BLUELIGHTSABER
+            //     ? 'images/Blue transparent.png'
+            //     : 'images/Red transparent.png'),
             actions: [
               ElevatedButton(
                 child: Text("Play Again"),
@@ -161,5 +247,28 @@ class _MyAppState extends State<MyApp> {
       _boardState = List.filled(9, TileState.EMPTY);
       _currentTurn = TileState.BLUELIGHTSABER;
     });
+  }
+
+  void _showDrawDialog() {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Its A Draw!!"),
+            // content: Image.asset(tileState == TileState.BLUELIGHTSABER
+            //     ? 'images/Blue transparent.png'
+            //     : 'images/Red transparent.png'),
+            actions: [
+              ElevatedButton(
+                child: Text("Play Again"),
+                onPressed: () {
+                  _resetGame();
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 }
