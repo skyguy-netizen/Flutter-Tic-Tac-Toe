@@ -29,6 +29,12 @@ class _MyAppState extends State<MyApp> {
   int redLightSaberScore = 0;
 
   @override
+  Widget clearScoreBoardButton() {
+    return ElevatedButton(
+        onPressed: () => _clearEverything(), child: Text("Clear Score Board"));
+  }
+
+  @override
   Widget buildScoreBoard() {
     return Scaffold(
       backgroundColor: Color.fromARGB(0, 255, 255, 255),
@@ -98,6 +104,9 @@ class _MyAppState extends State<MyApp> {
             body: (Center(
       child: Stack(children: [
         Align(alignment: AlignmentDirectional.topEnd, child: buildScoreBoard()),
+        Align(
+            alignment: AlignmentDirectional.bottomEnd,
+            child: clearScoreBoardButton()),
         Align(
             alignment: AlignmentDirectional.center,
             child: Image.asset("images/board.png")),
@@ -218,6 +227,9 @@ class _MyAppState extends State<MyApp> {
     //         ],
     //       );
     //     });
+    (tileState == TileState.BLUELIGHTSABER)
+        ? blueLightSaberScore++
+        : redLightSaberScore++;
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -247,6 +259,12 @@ class _MyAppState extends State<MyApp> {
       _boardState = List.filled(9, TileState.EMPTY);
       _currentTurn = TileState.BLUELIGHTSABER;
     });
+  }
+
+  void _clearEverything() {
+    _resetGame();
+    blueLightSaberScore = 0;
+    redLightSaberScore = 0;
   }
 
   void _showDrawDialog() {
